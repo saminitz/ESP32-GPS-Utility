@@ -5,12 +5,7 @@
 void setup() {
     Serial.begin(115200);
 
-    //Setting pins to work without resistors
-    pinMode(2, INPUT_PULLUP);   
-    pinMode(4, INPUT_PULLUP);
-    pinMode(12, INPUT_PULLUP);
-    pinMode(13, INPUT_PULLUP);
-    pinMode(15, INPUT_PULLUP);
+    FileSystemSetup();
 
     if (!SD_MMC.begin("/sdcard", ONE_BIT_MODE)) {
         Serial.println("Card Mount Failed");
@@ -36,6 +31,21 @@ void setup() {
 
     writeFile(SD_MMC, "/gps-test.txt", "Beginning of the file\n");    
     appendFile(SD_MMC, "/gps-test.txt", "Hello World!\n");
+
+    listDir(SD_MMC, "/", 0);
+    createDir(SD_MMC, "/mydir");
+    listDir(SD_MMC, "/", 0);
+    removeDir(SD_MMC, "/mydir");
+    listDir(SD_MMC, "/", 2);
+    writeFile(SD_MMC, "/hello.txt", "Hello ");
+    appendFile(SD_MMC, "/hello.txt", "World!\n");
+    readFile(SD_MMC, "/hello.txt");
+    deleteFile(SD_MMC, "/foo.txt");
+    renameFile(SD_MMC, "/hello.txt", "/foo.txt");
+    readFile(SD_MMC, "/foo.txt");
+    testFileIO(SD_MMC, "/test.txt");
+    Serial.printf("Total space: %lluMB\n", SD_MMC.totalBytes() / (1024 * 1024));
+    Serial.printf("Used space: %lluMB\n", SD_MMC.usedBytes() / (1024 * 1024));
 
     Serial.println("Done!");
 }
