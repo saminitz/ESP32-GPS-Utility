@@ -15,10 +15,11 @@
 
 #include "FileSystem.h"
 
+#define ONE_BIT_MODE false
 
-void FileSystemSetup() {
-    //Setting pins to work without resistors
-    pinMode(2, INPUT_PULLUP);   
+void FileSystem::setup() {
+    // Setting pins to work without resistors
+    pinMode(2, INPUT_PULLUP);
     pinMode(4, INPUT_PULLUP);
     pinMode(12, INPUT_PULLUP);
     pinMode(13, INPUT_PULLUP);
@@ -47,7 +48,7 @@ void FileSystemSetup() {
     }
 }
 
-void listDir(fs::FS &fs, const char *dirname, uint8_t levels) {
+void FileSystem::listDir(fs::FS &fs, const char *dirname, uint8_t levels) {
     Serial.printf("Listing directory: %s\n", dirname);
 
     File root = fs.open(dirname);
@@ -78,7 +79,7 @@ void listDir(fs::FS &fs, const char *dirname, uint8_t levels) {
     }
 }
 
-void createDir(fs::FS &fs, const char *path) {
+void FileSystem::createDir(fs::FS &fs, const char *path) {
     if (fs.mkdir(path)) {
         Serial.printf("Created Dir: %s\n", path);
     } else {
@@ -86,7 +87,7 @@ void createDir(fs::FS &fs, const char *path) {
     }
 }
 
-void removeDir(fs::FS &fs, const char *path) {
+void FileSystem::removeDir(fs::FS &fs, const char *path) {
     if (fs.rmdir(path)) {
         Serial.printf("Removed Dir: %s\n", path);
     } else {
@@ -94,7 +95,7 @@ void removeDir(fs::FS &fs, const char *path) {
     }
 }
 
-void readFile(fs::FS &fs, const char *path) {
+void FileSystem::readFile(fs::FS &fs, const char *path) {
     Serial.printf("Reading file: %s\n", path);
 
     File file = fs.open(path);
@@ -109,7 +110,7 @@ void readFile(fs::FS &fs, const char *path) {
     }
 }
 
-void writeFile(fs::FS &fs, const char *path, const char *message) {
+void FileSystem::writeFile(fs::FS &fs, const char *path, const char *message) {
     File file = fs.open(path, FILE_WRITE);
     if (!file) {
         Serial.println("Failed to open file for writing");
@@ -122,7 +123,7 @@ void writeFile(fs::FS &fs, const char *path, const char *message) {
     }
 }
 
-void appendFile(fs::FS &fs, const char *path, const char *message) {
+void FileSystem::appendFile(fs::FS &fs, const char *path, const char *message) {
     File file = fs.open(path, FILE_APPEND);
     if (!file) {
         Serial.println("Failed to open file for appending");
@@ -135,7 +136,7 @@ void appendFile(fs::FS &fs, const char *path, const char *message) {
     }
 }
 
-void renameFile(fs::FS &fs, const char *path1, const char *path2) {
+void FileSystem::renameFile(fs::FS &fs, const char *path1, const char *path2) {
     Serial.printf("Renaming file %s to %s\n", path1, path2);
     if (fs.rename(path1, path2)) {
         Serial.println("File renamed");
@@ -144,7 +145,7 @@ void renameFile(fs::FS &fs, const char *path1, const char *path2) {
     }
 }
 
-void deleteFile(fs::FS &fs, const char *path) {
+void FileSystem::deleteFile(fs::FS &fs, const char *path) {
     Serial.printf("Deleting file: %s\n", path);
     if (fs.remove(path)) {
         Serial.println("File deleted");
@@ -153,19 +154,19 @@ void deleteFile(fs::FS &fs, const char *path) {
     }
 }
 
-void testFileIO(fs::FS &fs, const char * path){
+void FileSystem::testFileIO(fs::FS &fs, const char *path) {
     File file = fs.open(path);
     static uint8_t buf[512];
     size_t len = 0;
     uint32_t start = millis();
     uint32_t end = start;
-    if(file){
+    if (file) {
         len = file.size();
         size_t flen = len;
         start = millis();
-        while(len){
+        while (len) {
             size_t toRead = len;
-            if(toRead > 512){
+            if (toRead > 512) {
                 toRead = 512;
             }
             file.read(buf, toRead);
@@ -178,16 +179,15 @@ void testFileIO(fs::FS &fs, const char * path){
         Serial.println("Failed to open file for reading");
     }
 
-
     file = fs.open(path, FILE_WRITE);
-    if(!file){
+    if (!file) {
         Serial.println("Failed to open file for writing");
         return;
     }
 
     size_t i;
     start = millis();
-    for(i=0; i<2048; i++){
+    for (i = 0; i < 2048; i++) {
         file.write(buf, 512);
     }
     end = millis() - start;
