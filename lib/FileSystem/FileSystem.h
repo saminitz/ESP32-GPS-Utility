@@ -1,6 +1,8 @@
 #include <FS.h>
 #include <SD_MMC.h>
 
+#define ONE_BIT_MODE false
+
 void FileSystemSetup();
 void listDir(fs::FS &fs, const char *dirname, uint8_t levels);
 void createDir(fs::FS &fs, const char *path);

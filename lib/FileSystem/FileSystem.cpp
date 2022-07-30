@@ -15,7 +15,6 @@
 
 #include "FileSystem.h"
 
-#define ONE_BIT_MODE false
 
 void FileSystemSetup() {
     //Setting pins to work without resistors
