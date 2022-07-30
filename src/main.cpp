@@ -1,9 +1,13 @@
 #include <FileSystem.h>
+#include <WebServer.h>
 
 FileSystem sdcard;
+WebServer webServer;
 
 void setup() {
     Serial.begin(115200);
+
+    webServer.setup();
 
     sdcard.setup();
 

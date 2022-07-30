@@ -1,3 +1,6 @@
+#ifndef __FILESYSTEM_H__
+#define __FILESYSTEM_H__
+
 #include <FS.h>
 #include <SD_MMC.h>
 
@@ -16,3 +19,4 @@ class FileSystem {
     void deleteFile(fs::FS &fs, const char *path);
     void testFileIO(fs::FS &fs, const char *path);
 };
+#endif // __FILESYSTEM_H__

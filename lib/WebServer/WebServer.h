@@ -1,4 +1,6 @@
-#include <AsyncElegantOTA.h>
+#ifndef __WEBSERVER_H__
+#define __WEBSERVER_H__
+
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
 #include <Update.h>
@@ -9,5 +11,7 @@ class WebServer {
     void setup();
 
    private:
+    void wifiSetup();
     void otaSetup();
 };
+#endif  // __WEBSERVER_H__
