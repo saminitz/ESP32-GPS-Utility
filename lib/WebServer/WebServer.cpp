@@ -1,6 +1,6 @@
 #include "WebServer.h"
 
-// Had to move the library due to poor implementation
+// Had to move the library into the cpp file due to poor implementation
 #include <AsyncElegantOTA.h>
 
 // Set these to your desired credentials.
