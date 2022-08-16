@@ -1,20 +1,18 @@
-#include <FileSystem.h>
+#include <MyGPS.h>
 #include <WebServer.h>
 
-FileSystem sdcard;
+MyGPS myGPS;
 WebServer webServer;
 
 void setup() {
     Serial.begin(115200);
-
-    webServer.setup();
-    sdcard.setup();
     
-    sdcard.writeFile(SD_MMC, "/gps-test.txt", "Beginning of the file\n");    
-    sdcard.appendFile(SD_MMC, "/gps-test.txt", "Hello World!\n");
+    webServer.setup();
+    myGPS.setup();
 
-    Serial.println("Done!");
+    Serial.println("Main Done!");
 }
 
 void loop() {
+    myGPS.loop();
 }
