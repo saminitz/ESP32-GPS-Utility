@@ -8,6 +8,7 @@ class MyGPS {
     void setup();
     void loop();
     void smartDelay(unsigned long start, unsigned long ms);
+    void waitForFix();
     String getDateTimeAsString();
     
 };
