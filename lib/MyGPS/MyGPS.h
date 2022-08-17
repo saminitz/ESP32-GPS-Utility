@@ -9,7 +9,7 @@ class MyGPS {
     void loop();
     void smartDelay(unsigned long start, unsigned long ms);
     void waitForFix();
-    String getDateTimeAsString();
+    const char* getDateTimeAsString();
     
 };
 #endif // __MYGPS_H__

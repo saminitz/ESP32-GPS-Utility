@@ -39,7 +39,7 @@ void MyGPS::waitForFix() {
     }
 }
 
-String MyGPS::getDateTimeAsString() {
+const char* MyGPS::getDateTimeAsString() {
     TinyGPSDate d = gps.date;
     TinyGPSTime t = gps.time;
     char dateTime[25];

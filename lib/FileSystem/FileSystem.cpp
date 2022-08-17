@@ -48,10 +48,10 @@ void FileSystem::setup() {
     }
 }
 
-void FileSystem::listDir(fs::FS &fs, const char *dirname, uint8_t levels) {
+void FileSystem::listDir(const char *dirname, uint8_t levels) {
     Serial.printf("Listing directory: %s\n", dirname);
 
-    File root = fs.open(dirname);
+    File root = SD_MMC.open(dirname);
     if (!root) {
         Serial.println("Failed to open directory");
         return;
@@ -67,7 +67,7 @@ void FileSystem::listDir(fs::FS &fs, const char *dirname, uint8_t levels) {
             Serial.print("  DIR : ");
             Serial.println(file.name());
             if (levels) {
-                listDir(fs, file.name(), levels - 1);
+                listDir(file.name(), levels - 1);
             }
         } else {
             Serial.print("  FILE: ");
@@ -79,26 +79,47 @@ void FileSystem::listDir(fs::FS &fs, const char *dirname, uint8_t levels) {
     }
 }
 
-void FileSystem::createDir(fs::FS &fs, const char *path) {
-    if (fs.mkdir(path)) {
+const char*  FileSystem::getNameOfLatestFileInFolder(const char *dirname){
+    File root = SD_MMC.open(dirname);
+    if (!root) {
+        Serial.println("Failed to open directory");
+        return;
+    }
+    if (!root.isDirectory()) {
+        Serial.println("Not a directory");
+        return;
+    }
+    
+    File file = root.openNextFile();
+    File lastFile = file;
+    while (file) {
+        file = root.openNextFile();
+        lastFile = file;
+    }
+
+    return !lastFile ? NULL : lastFile.name();
+}
+
+void FileSystem::createDir(const char *path) {
+    if (SD_MMC.mkdir(path)) {
         Serial.printf("Created Dir: %s\n", path);
     } else {
         Serial.printf("mkdir failed on dir %s\n", path);
     }
 }
 
-void FileSystem::removeDir(fs::FS &fs, const char *path) {
-    if (fs.rmdir(path)) {
+void FileSystem::removeDir(const char *path) {
+    if (SD_MMC.rmdir(path)) {
         Serial.printf("Removed Dir: %s\n", path);
     } else {
         Serial.printf("rmdir failed on file %s\n", path);
     }
 }
 
-void FileSystem::readFile(fs::FS &fs, const char *path) {
+void FileSystem::readFile(const char *path) {
     Serial.printf("Reading file: %s\n", path);
 
-    File file = fs.open(path);
+    File file = SD_MMC.open(path);
     if (!file) {
         Serial.println("Failed to open file for reading");
         return;
@@ -110,8 +131,8 @@ void FileSystem::readFile(fs::FS &fs, const char *path) {
     }
 }
 
-void FileSystem::writeFile(fs::FS &fs, const char *path, const char *message) {
-    File file = fs.open(path, FILE_WRITE);
+void FileSystem::writeFile(const char *path, const char *message) {
+    File file = SD_MMC.open(path, FILE_WRITE);
     if (!file) {
         Serial.println("Failed to open file for writing");
         return;
@@ -123,8 +144,8 @@ void FileSystem::writeFile(fs::FS &fs, const char *path, const char *message) {
     }
 }
 
-void FileSystem::appendFile(fs::FS &fs, const char *path, const char *message) {
-    File file = fs.open(path, FILE_APPEND);
+void FileSystem::appendFile(const char *path, const char *message) {
+    File file = SD_MMC.open(path, FILE_APPEND);
     if (!file) {
         Serial.println("Failed to open file for appending");
         return;
@@ -136,26 +157,26 @@ void FileSystem::appendFile(fs::FS &fs, const char *path, const char *message) {
     }
 }
 
-void FileSystem::renameFile(fs::FS &fs, const char *path1, const char *path2) {
+void FileSystem::renameFile(const char *path1, const char *path2) {
     Serial.printf("Renaming file %s to %s\n", path1, path2);
-    if (fs.rename(path1, path2)) {
+    if (SD_MMC.rename(path1, path2)) {
         Serial.println("File renamed");
     } else {
         Serial.println("Rename failed");
     }
 }
 
-void FileSystem::deleteFile(fs::FS &fs, const char *path) {
+void FileSystem::deleteFile(const char *path) {
     Serial.printf("Deleting file: %s\n", path);
-    if (fs.remove(path)) {
+    if (SD_MMC.remove(path)) {
         Serial.println("File deleted");
     } else {
         Serial.println("Delete failed");
     }
 }
 
-void FileSystem::testFileIO(fs::FS &fs, const char *path) {
-    File file = fs.open(path);
+void FileSystem::testFileIO(const char *path) {
+    File file = SD_MMC.open(path);
     static uint8_t buf[512];
     size_t len = 0;
     uint32_t start = millis();
@@ -179,7 +200,7 @@ void FileSystem::testFileIO(fs::FS &fs, const char *path) {
         Serial.println("Failed to open file for reading");
     }
 
-    file = fs.open(path, FILE_WRITE);
+    file = SD_MMC.open(path, FILE_WRITE);
     if (!file) {
         Serial.println("Failed to open file for writing");
         return;
