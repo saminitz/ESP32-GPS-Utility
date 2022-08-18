@@ -27,12 +27,14 @@ void FileSystem::setup() {
 
     if (!SD_MMC.begin("/sdcard", ONE_BIT_MODE)) {
         Serial.println("Card Mount Failed");
+        delay(INT32_MAX);
         return;
     }
     uint8_t cardType = SD_MMC.cardType();
 
     if (cardType == CARD_NONE) {
-        Serial.println("No SD_MMC card attached");
+        Serial.println("No SD_MMC card attached");        
+        delay(INT32_MAX);
         return;
     }
 
@@ -83,11 +85,11 @@ const char*  FileSystem::getNameOfLatestFileInFolder(const char *dirname){
     File root = SD_MMC.open(dirname);
     if (!root) {
         Serial.println("Failed to open directory");
-        return;
+        return NULL;
     }
     if (!root.isDirectory()) {
         Serial.println("Not a directory");
-        return;
+        return NULL;
     }
     
     File file = root.openNextFile();

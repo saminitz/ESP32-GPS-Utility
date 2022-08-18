@@ -6,20 +6,38 @@ static const int GPSPeriod = 1 / GPSHz * 1000;
 static const uint32_t GPSBaud = 230400;
 
 TinyGPSPlus gps;
+TinyGPSCustom fixMode(gps, "GNGSA", 1);
+
+GPX gpx;
 
 void MyGPS::setup() {
     Serial2.begin(GPSBaud, SERIAL_8N1, RXPin, TXPin);
 
+    gpx.setup();
     waitForFix();
+
+    char buf[250];
+    sprintf(buf, "/%s.gpx", getDateTimeAsString());    
+    Serial.println(buf);
+    gpx.createNewGpxFile(buf);
 }
 
 void MyGPS::loop() {
     unsigned long start = millis();
 
-    if (!(gps.location.isValid() && gps.altitude.isValid() && gps.date.isValid() && gps.time.isValid() && gps.hdop.isValid() && gps.speed.isValid())) {
+    if (!(gps.location.isValid() && gps.altitude.isValid() && gps.date.isValid() && gps.time.isValid() && fixMode.isValid() && gps.hdop.isValid() && gps.speed.isValid() && fixMode.value() != "1")) {
         smartDelay(start, GPSPeriod);
         return;
     }
+
+    gpx.appendCurrentGpxFile(gpx.createNewTrackPoint(
+        gps.location.lat(),
+        gps.location.lng(),
+        gps.altitude.value(),
+        getDateTimeAsString(),
+        fixMode.value() == "2" ? "2d" : "3d",
+        gps.hdop.value(),
+        gps.speed.value()));
 
     smartDelay(start, GPSPeriod);
 }
@@ -34,15 +52,17 @@ void MyGPS::smartDelay(unsigned long start, unsigned long ms) {
 }
 
 void MyGPS::waitForFix() {
+    Serial.println("Waiting first fix");
     while (!gps.location.isValid()) {
         smartDelay(millis(), 100);
     }
+    Serial.println("Found fist fix");
 }
 
 const char* MyGPS::getDateTimeAsString() {
     TinyGPSDate d = gps.date;
     TinyGPSTime t = gps.time;
-    char dateTime[25];
+    char* dateTime = new char[25];
 
     sprintf(dateTime, "%04d-%02d-%2dT%02d:%02d:%02d.%03dZ", d.year(), d.month(), d.day(),
             t.hour(), t.minute(), t.second(),

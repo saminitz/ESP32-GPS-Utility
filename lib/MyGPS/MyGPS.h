@@ -1,6 +1,7 @@
 #ifndef __MYGPS_H__
 #define __MYGPS_H__
 
+#include <GPX.h>
 #include <TinyGPS++.h>
 
 class MyGPS {
@@ -10,6 +11,5 @@ class MyGPS {
     void smartDelay(unsigned long start, unsigned long ms);
     void waitForFix();
     const char* getDateTimeAsString();
-    
 };
-#endif // __MYGPS_H__
+#endif  // __MYGPS_H__

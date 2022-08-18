@@ -7,15 +7,18 @@ void GPX::setup() {
     sdcard.setup();
 }
 
-void GPX::reuseLastGPX(const char* currentDateTime) {
+void GPX::reuseLastGpxOrCreateNew(const char* currentDateTime) {
     const char* latestFile = sdcard.getNameOfLatestFileInFolder("/");
     if (latestFile == NULL)
-        currentDateTime;
+        currentFile = currentDateTime;
     else
         currentFile = latestFile;
 }
 
-void GPX::createNewGpxFile() {
+
+
+void GPX::createNewGpxFile(const char* currentDateTime) {
+    currentFile = currentDateTime;
     String xmlBeginning =
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"https://github.com/juanirache/gopro-telemetry\">"
@@ -40,7 +43,7 @@ void GPX::writeEndOfFile() {
 }
 
 const char* GPX::createNewTrackPoint(double latitude, double longitude, double altitude, const char* time, const char* fix, int hdop, double speed) {
-    char trkpt[198];
+    char* trkpt = new char[198];
     sprintf(trkpt,
             "			<trkpt lat=\"%0.8f\" lon=\"%0.8f\">\n"
             "				<ele>%0.3f</ele>\n"

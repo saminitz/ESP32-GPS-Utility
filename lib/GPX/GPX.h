@@ -2,13 +2,12 @@
 #define __GPX_H__
 
 #include <FileSystem.h>
-#include <MyGPS.h>
 
 class GPX {
    public:
     void setup();
-    void reuseLastGPX(const char* currentDateTime);
-    void createNewGpxFile();
+    void reuseLastGpxOrCreateNew(const char* currentDateTime);
+    void createNewGpxFile(const char* currentDateTime);
     void writeEndOfFile();
     const char* createNewTrackPoint(double latitude, double longitude, double altitude, const char* time, const char* fix, int hdop, double speed);
     void appendCurrentGpxFile(const char* str);
