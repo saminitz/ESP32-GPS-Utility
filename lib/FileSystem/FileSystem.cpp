@@ -20,7 +20,7 @@
 void FileSystem::setup() {
     // Setting pins to work without resistors
     pinMode(2, INPUT_PULLUP);
-    pinMode(4, INPUT_PULLUP);
+    // pinMode(4, INPUT_PULLUP);
     pinMode(12, INPUT_PULLUP);
     pinMode(13, INPUT_PULLUP);
     pinMode(15, INPUT_PULLUP);
@@ -33,7 +33,7 @@ void FileSystem::setup() {
     uint8_t cardType = SD_MMC.cardType();
 
     if (cardType == CARD_NONE) {
-        Serial.println("No SD_MMC card attached");        
+        Serial.println("No SD_MMC card attached");
         delay(INT32_MAX);
         return;
     }
@@ -81,7 +81,7 @@ void FileSystem::listDir(const char *dirname, uint8_t levels) {
     }
 }
 
-const char*  FileSystem::getNameOfLatestFileInFolder(const char *dirname){
+const char *FileSystem::getNameOfLatestFileInFolder(const char *dirname) {
     File root = SD_MMC.open(dirname);
     if (!root) {
         Serial.println("Failed to open directory");
@@ -91,7 +91,7 @@ const char*  FileSystem::getNameOfLatestFileInFolder(const char *dirname){
         Serial.println("Not a directory");
         return NULL;
     }
-    
+
     File file = root.openNextFile();
     File lastFile = file;
     while (file) {

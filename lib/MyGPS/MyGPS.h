@@ -10,6 +10,6 @@ class MyGPS {
     void loop();
     void smartDelay(unsigned long start, unsigned long ms);
     void waitForFix();
-    const char* getDateTimeAsString();
+    const char* getDateTimeAsString(bool replaceColonWithDot = false);
 };
 #endif  // __MYGPS_H__

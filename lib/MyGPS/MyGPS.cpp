@@ -2,7 +2,7 @@
 
 static const int RXPin = 16, TXPin = 17;
 static const int GPSHz = 10;
-static const int GPSPeriod = 1 / GPSHz * 1000;
+static const int GPSPeriod = (1 / (double)GPSHz) * 1000;
 static const uint32_t GPSBaud = 230400;
 
 TinyGPSPlus gps;
@@ -16,10 +16,7 @@ void MyGPS::setup() {
     gpx.setup();
     waitForFix();
 
-    char buf[250];
-    sprintf(buf, "/%s.gpx", getDateTimeAsString());    
-    Serial.println(buf);
-    gpx.createNewGpxFile(buf);
+    gpx.createNewGpxFile(getDateTimeAsString(true));
 }
 
 void MyGPS::loop() {
@@ -59,13 +56,14 @@ void MyGPS::waitForFix() {
     Serial.println("Found fist fix");
 }
 
-const char* MyGPS::getDateTimeAsString() {
+const char* MyGPS::getDateTimeAsString(bool replaceColonWithDot) {
     TinyGPSDate d = gps.date;
     TinyGPSTime t = gps.time;
-    char* dateTime = new char[25];
+    static char dateTime[25];
+    char timeSpacer = replaceColonWithDot ? '.' : ':';
 
-    sprintf(dateTime, "%04d-%02d-%2dT%02d:%02d:%02d.%03dZ", d.year(), d.month(), d.day(),
-            t.hour(), t.minute(), t.second(),
+    sprintf(dateTime, "%04d-%02d-%2dT%02d%c%02d%c%02d.%03dZ", d.year(), d.month(), d.day(),
+            t.hour(), timeSpacer, t.minute(), timeSpacer, t.second(),
             t.centisecond() * 10 + (int)(millis() % 100));  // milliseconds of the esp32 smuggled in to get to time
 
     return dateTime;

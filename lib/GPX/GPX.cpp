@@ -1,7 +1,7 @@
 #include "GPX.h"
 
 FileSystem sdcard;
-const char* currentFile;
+static const char* currentFile;
 
 void GPX::setup() {
     sdcard.setup();
@@ -15,45 +15,46 @@ void GPX::reuseLastGpxOrCreateNew(const char* currentDateTime) {
         currentFile = latestFile;
 }
 
-
-
 void GPX::createNewGpxFile(const char* currentDateTime) {
-    currentFile = currentDateTime;
+    static char buf[32];
+    sprintf(buf, "/%s.gpx", currentDateTime);
+
+    currentFile = buf;
     String xmlBeginning =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-        "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"https://github.com/juanirache/gopro-telemetry\">"
-        "	<trk>"
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"https://github.com/juanirache/gopro-telemetry\">\n"
+        "	<trk>\n"
         "		<name>" +
-        (String)currentFile +
-        "</name>"
-        "		<desc>10Hz GPS (Lat., Long., Alt., 2D speed) - [deg,deg,m,m/s]</desc>"
-        "		<src>ESP32 10Hz GPS</src>"
-        "		<trkseg>";
+        (String)currentDateTime +
+        "</name>\n"
+        "		<desc>10Hz GPS (Lat., Long., Alt., 2D speed) - [deg,deg,m,m/s]</desc>\n"
+        "		<src>ESP32 10Hz GPS</src>\n"
+        "		<trkseg>\n";
 
     sdcard.writeFile(currentFile, xmlBeginning.c_str());
 }
 
 void GPX::writeEndOfFile() {
     const char* xmlEnding =
-        "		</trkseg>"
-        "	</trk>"
+        "		</trkseg>\n"
+        "	</trk>\n"
         "</gpx>";
 
     sdcard.writeFile(currentFile, xmlEnding);
 }
 
-const char* GPX::createNewTrackPoint(double latitude, double longitude, double altitude, const char* time, const char* fix, int hdop, double speed) {
-    char* trkpt = new char[198];
+const char* GPX::createNewTrackPoint(double latitude, double longitude, double altitude, const char* time, const char* fix, int hdop, int speed) {
+    static char trkpt[200];
     sprintf(trkpt,
             "			<trkpt lat=\"%0.8f\" lon=\"%0.8f\">\n"
             "				<ele>%0.3f</ele>\n"
             "				<time>%s</time>\n"
             "				<fix>%s</fix>\n"
             "				<hdop>%d</hdop>\n"
-            "				<cmt>2dSpeed: %0.3f</cmt>\n"
+            "				<cmt>2dSpeed: %d</cmt>\n"
             "			</trkpt>\n",
             latitude, longitude, altitude, time, fix, hdop, speed);
-    
+
     return trkpt;
 }
 
