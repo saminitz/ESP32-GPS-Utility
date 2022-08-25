@@ -11,5 +11,6 @@ class MyGPS {
     void smartDelay(unsigned long start, unsigned long ms);
     void waitForFix();
     const char* getDateTimeAsString(bool replaceColonWithDot = false);
+    const char* getFixMode();
 };
 #endif  // __MYGPS_H__

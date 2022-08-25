@@ -58,6 +58,10 @@ void MyGPS::waitForFix() {
     Serial.println("Found fist fix");
 }
 
+const char* MyGPS::getFixMode() {
+    return fixMode.value();
+}
+
 const char* MyGPS::getDateTimeAsString(bool replaceColonWithDot) {
     TinyGPSDate d = gps.date;
     TinyGPSTime t = gps.time;
