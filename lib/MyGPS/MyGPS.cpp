@@ -6,7 +6,7 @@ static const int GPSPeriod = (1 / (double)GPSHz) * 1000;
 static const uint32_t GPSBaud = 230400;
 
 TinyGPSPlus gps;
-TinyGPSCustom fixMode(gps, "GNGSA", 1);
+TinyGPSCustom fixMode(gps, "GNGSA", 2);
 
 GPX gpx;
 
@@ -22,19 +22,21 @@ void MyGPS::setup() {
 void MyGPS::loop() {
     unsigned long start = millis();
 
-    if (!(gps.location.isValid() && gps.altitude.isValid() && gps.date.isValid() && gps.time.isValid() && fixMode.isValid() && gps.hdop.isValid() && gps.speed.isValid() && fixMode.value() != "1")) {
+    if (!(gps.location.isValid() && gps.date.isValid() && gps.time.isValid() && fixMode.isValid() && fixMode.value() != "1" && gps.hdop.isValid() && gps.speed.isValid())) {
         smartDelay(start, GPSPeriod);
         return;
     }
 
+    Serial.println("Valid");
+
     gpx.appendCurrentGpxFile(gpx.createNewTrackPoint(
         gps.location.lat(),
         gps.location.lng(),
-        gps.altitude.value(),
         getDateTimeAsString(),
-        fixMode.value() == "2" ? "2d" : "3d",
+        fixMode.value() == "2" ? "2d" : fixMode.value() == "3" ? "3d"
+                                                               : fixMode.value(),
         gps.hdop.value(),
-        gps.speed.value()));
+        gps.speed.kmph()));
 
     smartDelay(start, GPSPeriod);
 }
