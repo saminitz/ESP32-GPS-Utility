@@ -8,6 +8,7 @@ static const uint32_t GPSBaud = 230400;
 TinyGPSPlus gps;
 TinyGPSCustom fixMode(gps, "GNGSA", 2);
 
+MyGPS myGPS;
 GPX gpx;
 
 void MyGPS::setup() {
@@ -35,7 +36,7 @@ void MyGPS::loop() {
         getDateTimeAsString(),
         fixMode.value() == "2" ? "2d" : fixMode.value() == "3" ? "3d"
                                                                : fixMode.value(),
-        gps.hdop.value(),
+        gps.hdop.hdop(),
         gps.speed.kmph()));
 
     smartDelay(start, GPSPeriod);
@@ -73,4 +74,18 @@ const char* MyGPS::getDateTimeAsString(bool replaceColonWithDot) {
             t.centisecond() * 10 + (int)(millis() % 100));  // milliseconds of the esp32 smuggled in to get to time
 
     return dateTime;
+}
+
+const char* MyGPS::generateStats() {
+    static char trkpt[200];
+    sprintf(trkpt,
+            "Latitude:  %0.8f\n"
+            "Longitude: %0.8f\n"
+            "Date UTC:  %s\n"
+            "Fix Mode:  %s\n"
+            "HDOP:      %0.1f\n"
+            "2D Speed:  %0.2f\n",
+            gps.location.lat(), gps.location.lng(), getDateTimeAsString(), getFixMode(), gps.hdop.hdop(), gps.speed.kmph());
+
+    return trkpt;
 }

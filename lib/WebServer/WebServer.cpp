@@ -12,6 +12,10 @@ AsyncWebServer server(80);
 void WebServer::setup() {
     wifiSetup();
     otaSetup();
+
+    server.on("/stats", HTTP_GET, [] (AsyncWebServerRequest *request) {
+        request->send(200, "text/plain", myGPS.generateStats());
+    });
 }
 
 void WebServer::wifiSetup() {

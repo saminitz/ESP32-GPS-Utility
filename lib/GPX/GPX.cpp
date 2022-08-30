@@ -43,13 +43,13 @@ void GPX::writeEndOfFile() {
     sdcard.writeFile(currentFile, xmlEnding);
 }
 
-const char* GPX::createNewTrackPoint(double latitude, double longitude, const char* time, const char* fix, int hdop, double speed) {
+const char* GPX::createNewTrackPoint(double latitude, double longitude, const char* time, const char* fix, double hdop, double speed) {
     static char trkpt[200];
     sprintf(trkpt,
             "			<trkpt lat=\"%0.8f\" lon=\"%0.8f\">\n"
             "				<time>%s</time>\n"
             "				<fix>%s</fix>\n"
-            "				<hdop>%d</hdop>\n"
+            "				<hdop>%0.1f</hdop>\n"
             "				<cmt>2dSpeed: %0.2f</cmt>\n"
             "			</trkpt>\n",
             latitude, longitude, time, fix, hdop, speed);

@@ -1,10 +1,10 @@
 #include <MyGPS.h>
 #include <WebServer.h>
 
-MyGPS myGPS;
 WebServer webServer;
 
 void setup() {
+    pinMode(12, PULLDOWN);
     Serial.begin(115200);
     
     webServer.setup();

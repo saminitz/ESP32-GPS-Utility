@@ -12,5 +12,8 @@ class MyGPS {
     void waitForFix();
     const char* getDateTimeAsString(bool replaceColonWithDot = false);
     const char* getFixMode();
+    const char* generateStats();
 };
+
+extern MyGPS myGPS;
 #endif  // __MYGPS_H__

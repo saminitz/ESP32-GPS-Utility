@@ -5,7 +5,6 @@
 #include <MyGPS.h>
 #include <SPIFFS.h>
 #include <Update.h>
-#include <WebSocketsClient.h>
 #include <WiFi.h>
 
 class WebServer {
