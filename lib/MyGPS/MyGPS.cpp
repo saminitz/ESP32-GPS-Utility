@@ -69,7 +69,7 @@ const char* MyGPS::getDateTimeAsString(bool replaceColonWithDot) {
     static char dateTime[25];
     char timeSpacer = replaceColonWithDot ? '.' : ':';
 
-    sprintf(dateTime, "%04d-%02d-%2dT%02d%c%02d%c%02d.%03dZ", d.year(), d.month(), d.day(),
+    sprintf(dateTime, "%04d-%02d-%02dT%02d%c%02d%c%02d.%03dZ", d.year(), d.month(), d.day(),
             t.hour(), timeSpacer, t.minute(), timeSpacer, t.second(),
             t.centisecond() * 10 + (int)(millis() % 100));  // milliseconds of the esp32 smuggled in to get to time
 
