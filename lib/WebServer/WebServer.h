@@ -10,6 +10,7 @@
 class WebServer {
    public:
     void setup();
+    void loop();
 
    private:
     void wifiSetup();

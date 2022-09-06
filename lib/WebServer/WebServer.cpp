@@ -8,6 +8,7 @@ const char *ssid = "Yamaha YZF-R3 GPS";
 const char *password = "fff222ccc1234";
 
 AsyncWebServer server(80);
+AsyncWebSocket ws("/ws");
 
 void WebServer::setup() {
     wifiSetup();
@@ -17,6 +18,17 @@ void WebServer::setup() {
         request->send(200, "text/plain", myGPS.generateStats());
     });
 }
+
+void WebServer::loop() {
+    static const unsigned long interval = 1000; // ms
+	static unsigned long lastRefreshTime = 0;
+    
+    if(millis() - lastRefreshTime >= interval)
+    {
+        lastRefreshTime += interval;
+        ws.textAll(myGPS.generateStats());
+    }
+}    
 
 void WebServer::wifiSetup() {
     IPAddress myIP(192, 168, 4, 1);
